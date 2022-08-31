@@ -43,6 +43,7 @@ app.post('/cats', postCats);
 // :id - declares a variable on a URL path
 // we will send the ID of the cat we want to delete
 app.delete('/cats/:id', deleteCats);
+app.put('/cats/:id', putCats);
 
 async function getCats(req, res, next) {
   try {
@@ -72,6 +73,24 @@ async function deleteCats(req, res, next) {
     next(err);
   }
 }
+// let arr = [cat1, cat2, cat3]
+
+// let backarr = [backCat1, cat2, backCat3];
+
+async function putCats(req, res, next) {
+  try {
+    let id = req.params.id;
+
+    // findByIdAndUpdate method takes in 3 arguments:
+    // - 1. the id of the thing we want to update
+    // - 2. the updated data object
+    // - 3. an options object (this is just what we have to do)
+    let updatedCat = await Cat.findByIdAndUpdate(id, req.body, { new: true, overwrite: true });
+    res.status(200).send(updatedCat);
+  } catch(err) {
+    next(err);
+  }
+}
 
 
 app.get('*', (request, response) => {
@@ -79,7 +98,7 @@ app.get('*', (request, response) => {
 });
 
 // ERROR
-app.use((error, request, response, next) => {
+app.use((error, req, res, next) => {
   res.status(500).send(error.message);
 });
 
